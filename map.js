@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 export default class MyMap {
   constructor(mapId, onClick) {
-    //onClick() нужна для такого,чтобы по любому щедчку на карте открывать форму
+    //onClick() нужна для такого,чтобы определить координаты  щелчка по кластеру или просто по любой точке
     this.mapId = mapId;
     this.onClick = onClick;
   }
@@ -39,5 +39,22 @@ export default class MyMap {
     });
     this.map.events.add('click', (e) => this.onClick(e.get('coords')));
     this.map.geoObjects.add(this.clusterer);
+  }
+  openBalloon(coords, content) {
+    this.map.balloon.open(coords, content);
+  }
+  setBalloonContent(content) {
+    this.map.balloon.setData(content);
+  }
+  closeBalloon() {
+    this.map.balloon.close();
+  }
+  createPlacemark(coords) {
+    const placemark = new ymaps.Placemark(coords);
+    placemark.events.add('click', (e) => {
+      const coords = e.get('target').geometry.getCoordinates();
+      this.onClick(coords);
+    });
+    this.clusterer.add(placemark);
   }
 }
